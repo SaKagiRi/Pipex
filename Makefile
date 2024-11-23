@@ -4,6 +4,7 @@ FLAGSs	= -Wall -Wextra -Werror
 CC	= cc
 OBJD	= obj
 SRCD	= src
+BSRCD	= src_bonus
 INC	= include
 KML	= KML
 
@@ -17,17 +18,17 @@ all:	$(OBJD) $(NAME)
 $(OBJD)/%.o : $(SRCD)/%.c
 	@$(CC) $(FLAGS) -I$(INC) -c $< -o $@ -g3
 
-$(NAME): $(KML) $(OBJ) 
+$(NAME): $(OBJ) 
 	@make -C $(KML) && $(CC) $(SRC) $(KML)/kml.a -I$(INC) -o $(OUT)/$(NAME)
 
 $(OBJD):
-	mkdir -p $(OBJD)
+	@mkdir -p $(OBJD)
 
 clean:
-	rm -rf $(OBJD) && make clean -C $(KML)
+	@rm -rf $(OBJD) && make clean -C $(KML)
 
 fclean: clean
-	rm -rf $(OUT)/$(NAME) && make fclean -C $(KML)
+	@rm -rf $(OUT)/$(NAME) && make fclean -C $(KML)
 
 re: fclean all
 

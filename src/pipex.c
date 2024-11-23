@@ -6,7 +6,7 @@
 /*   By: knakto <knakto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/17 15:09:22 by knakto            #+#    #+#             */
-/*   Updated: 2024/11/22 02:00:52 by knakto           ###   ########.fr       */
+/*   Updated: 2024/11/23 13:27:50 by knakto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	ft_execute(char **cmd, t_tool *tool, char **envp)
 	{
 		free_split(cmd);
 		free(path);
-		reerror("boommm0", 1, 0);
+		reerror("execute failed", 1, 0);
 	}
 }
 
@@ -34,9 +34,9 @@ void	fileinit(t_tool *tool, char **v)
 	tool->file_fd[0] = open(v[1], O_RDONLY);
 	if (tool->file_fd[0] == -1)
 		reerror("open file error", 1, tool->file_fd[0]);
-	tool->file_fd[1] = open(v[4], O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	tool->file_fd[1] = open(v[4], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (tool->file_fd[1] == -1)
-		reerror("can't creat file output", 1, tool->file_fd[1]);
+		reerror("can't create file output", 1, tool->file_fd[1]);
 }
 
 void	child1(t_tool *tool, char **envp, char **v)
@@ -49,7 +49,6 @@ void	child1(t_tool *tool, char **envp, char **v)
 	close(tool->pipe_fd[1]);
 	close(tool->file_fd[0]);
 	free_split(tool->cmd1);
-	exit(1);
 }
 
 void	child2(t_tool *tool, char **envp, char **v)
@@ -62,7 +61,6 @@ void	child2(t_tool *tool, char **envp, char **v)
 	close(tool->pipe_fd[0]);
 	close(tool->file_fd[1]);
 	free_split(tool->cmd2);
-	exit(1);
 }
 
 int	main(int c, char **v, char **envp)
