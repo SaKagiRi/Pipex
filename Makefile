@@ -1,7 +1,7 @@
 NAME	= pipex
 FILE	= pipex.c utils.c 
 BFILE	= pipex_bonus.c pipex_utils_bonus.c
-FLAGSs	= -Wall -Wextra -Werror
+FLAGS	= -Wall -Wextra -Werror -g3 #-fsanitize=address,undefined
 CC	= cc
 OBJD	= obj
 SRCD	= src
@@ -18,13 +18,13 @@ OUT	= ./
 all:	$(OBJD) $(NAME)
 
 $(OBJD)/%.o : $(SRCD)/%.c
-	@$(CC) $(FLAGS) -I$(INC) -c $< -o $@ -g3
+	@$(CC) $(FLAGS) -I$(INC) -c $< -o $@
 
 bonus: $(OBJD) $(BOBJ)
-	@make -C $(KML) && $(CC) $(BSRC) $(KML)/kml.a -o $(OUT)/$(NAME)
+	@make -C $(KML) && $(CC) $(FLAGS) $(BSRC) $(KML)/kml.a -o $(OUT)/$(NAME)
 
 $(NAME): $(OBJ) 
-	@make -C $(KML) && $(CC) $(SRC) $(KML)/kml.a -I$(INC) -o $(OUT)/$(NAME)
+	@make -C $(KML) && $(CC) $(FLAGS) $(SRC) $(KML)/kml.a -I$(INC) -o $(OUT)/$(NAME)
 
 $(OBJD):
 	@mkdir -p $(OBJD)

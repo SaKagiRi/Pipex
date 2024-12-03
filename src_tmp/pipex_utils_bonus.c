@@ -1,3 +1,5 @@
+/*
+*/
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                                            */
@@ -39,11 +41,8 @@
 
 void	last_cmd(t_tool *tool)
 {
-	int	file_fd;
-
-	file_fd = open(tool->v[tool->c - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	dup2(file_fd, 1);
-	close(file_fd);
+	dup2(tool->out_fd, 1);
+	close(tool->out_fd);
 	tool->cmd = ft_split(tool->v[tool->c - 2], ' ');
 	exe(tool);
 	free_split(tool->cmd);
@@ -69,11 +68,9 @@ char	*can_access(char **path, t_tool *tool)
 			return (ft_strdup(path[i]));
 		i++;
 	}
-	if (tool->cmd)
-		free_split(tool->cmd);
 	free(tool->pid);
 	free_split(path);
-	reerror("command not found", 0, 0);
+	reerror(*tool->cmd, tool);
 	return (NULL);
 }
 
@@ -82,30 +79,50 @@ char	**get_path(char **envp)
 	int		i;
 	char	**str;
 	char	*n;
+	char	*temp;
 
 	i = 0;
 	n = NULL;
-	str = (fsplit(argstr("PATH=", envp), '\n'));
+	temp = (argstr("PATH=", envp));
+	if(*temp == '\0')
+	{
+		free(temp);
+		return (NULL);
+	}
+	str = (fsplit(temp, '\n'));
 	while (str[i])
 	{
 		if ((ft_strncmp("PATH=", str[i++], 5) == 0))
 		{
 			n = ft_strdup(str[i - 1]);
-			break ;
+			str = ft_split(n + 5, ':');
+			free(n);
+			return (str);
 		}
 	}
-	str = free_split(str);
-	str = fsplit(n, '=');
-	n = ft_strdup(str[1]);
-	str = free_split(str);
-	str = fsplit(n, ':');
-	return (str);
+	free(temp);
+	free(str);
+	return (NULL);
 }
 
-void	reerror(char *txt, int errornum, int fd)
+void	reerror(char *text, t_tool *tool)
 {
-	if (fd < 0)
-		close(fd);
-	perror(txt);
-	exit(errornum);
+	perror(text);
+	if (tool->cmd && tool != NULL)
+		free_split(tool->cmd);
+	exit(EXIT_FAILURE);
+}
+
+void	here_doc_init(t_tool *tool, int file_fd)
+{
+	close(file_fd);
+	file_fd = open(".here_doc_temp", O_RDONLY);
+	dup2(file_fd, 0);
+	close(file_fd);
+	tool->pid = malloc(sizeof(pid_t) * tool->c);
+	if (!tool->pid)
+		reerror("text", tool);
+	tool->i = 3;
+	tool->wp = 3;
+	unlink(".here_doc_temp");
 }
