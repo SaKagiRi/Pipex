@@ -30,13 +30,14 @@ typedef struct s_tool
 	char	**cmd;
 }	t_tool;
 
-// void	reerror(char *txt);
-// char	**get_path(char **envp);
-// char	*can_access(char **path, char **v, t_tool *tool);
-// void	ft_execute(char **cmd, t_tool *tool, char **envp);
-// void	fileinit(t_tool *tool, char **v);
-// void	child1(t_tool *tool, char **envp, char **v);
-// void	child2(t_tool *tool, char **envp, char **v);
-// void	close_fd(t_tool *tool);
+int	check_cmdpath(t_tool *tool);
+void	check_access(t_tool *tool);
+void	execute(t_tool *tool, char **v, int num_cmd);
+void	ft_init(t_tool *tool, char **v, char **envp);
+void	fork_process(t_tool *tool, char **v);
+void	process_in(t_tool *tool, char **v);
+void	ft_close_fd(t_tool *tool);
+void	process_out(t_tool *tool, char **v);
+char	**getpath(t_tool *tool);
 
 #endif
