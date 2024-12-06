@@ -15,6 +15,7 @@
 
 # include <stdio.h>
 # include <sys/wait.h>
+# include <errno.h>
 # include "../KML/include/kml.h"
 
 typedef struct s_tool
