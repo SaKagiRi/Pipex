@@ -50,35 +50,6 @@ void	ft_close_fd(t_tool *tool)
 	close(tool->pipe_fd[1]);
 }
 
-int	check_cmdpath(t_tool *tool)
-{
-	int	i;
-
-	i = 0;
-	while (tool->cmd[0][i])
-	{
-		if (tool->cmd[0][i++] == '/')
-		{
-			if (access(tool->cmd[0], X_OK | F_OK) == 0)
-			{
-				tool->path_cmd = tool->cmd[0];
-				tool->cmd[0] = ft_strdup(ft_strrchr(tool->cmd[0], '/') + 1);
-				if (tool->all_path)
-					free_split(tool->all_path);
-				return (1);
-			}
-			if (tool->all_path)
-				free_split(tool->all_path);
-			perror(tool->cmd[0]);
-			free_split(tool->cmd);
-			exit(EXIT_FAILURE);
-		}
-	}
-	if (!tool->all_path)
-		return (-1);
-	return (0);
-}
-
 void	check_access(t_tool *tool)
 {
 	int	i;
@@ -105,26 +76,4 @@ void	check_access(t_tool *tool)
 	if (tool->cmd)
 		free_split(tool->cmd);
 	exit(EXIT_FAILURE);
-}
-
-void	execute(t_tool *tool, char **v, int num_cmd)
-{
-	tool->cmd = ft_split(v[num_cmd], ' ');
-	tool->all_path = getpath(tool);
-	if (!tool->all_path)
-	{
-		free(tool->cmd);
-		exit(EXIT_FAILURE);
-	}
-	check_access(tool);
-	if (execve(tool->path_cmd, tool->cmd, tool->envp) == -1)
-	{
-		ft_close_fd(tool);
-		if (tool->cmd)
-			free_split(tool->cmd);
-		free(tool->path_cmd);
-	}
-	if (tool->cmd)
-		free_split(tool->cmd);
-	free(tool->path_cmd);
 }

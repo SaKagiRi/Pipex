@@ -6,7 +6,7 @@
 /*   By: knakto <knakto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:55:12 by knakto            #+#    #+#             */
-/*   Updated: 2024/12/01 02:20:05 by knakto           ###   ########.fr       */
+/*   Updated: 2024/12/06 23:10:03 by knakto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@
 # include <sys/wait.h>
 # include <errno.h>
 # include "../KML/include/kml.h"
+
+# ifndef rwx
+# define rwx 0666
+# endif
 
 typedef struct s_tool
 {
@@ -30,7 +34,7 @@ typedef struct s_tool
 	char	**cmd;
 }	t_tool;
 
-int	check_cmdpath(t_tool *tool);
+int		check_cmdpath(t_tool *tool);
 void	check_access(t_tool *tool);
 void	execute(t_tool *tool, char **v, int num_cmd);
 void	ft_init(t_tool *tool, char **v, char **envp);
