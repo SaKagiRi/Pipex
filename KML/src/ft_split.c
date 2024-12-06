@@ -66,7 +66,7 @@ char	**free_split(char **alloc)
 	return (NULL);
 }
 
-static char	**alloc(char **str, char *s, char c, size_t count)
+static char	**ft_alloc(char **str, char *s, char c, size_t count)
 {
 	size_t	i;
 	size_t	start;
@@ -100,10 +100,19 @@ char	**ft_split(const char *s, char c)
 	if (!s)
 		return (NULL);
 	count = count_word((char *)s, c);
-	str = (char **)malloc(sizeof(char *) * (count + 1));
+	if (count == 1)
+	{
+		str = malloc(sizeof(char *) * 3);
+		if (!str)
+			return (NULL);
+		str[0] = ft_strdup(s);
+		str[1] = NULL;
+		return (str);
+	}
+	str = (char **)malloc(sizeof(char *) * (count + 2));
 	if (str == NULL)
 		return (NULL);
-	str = alloc(str, (char *)s, c, count);
-	str[count + 1] = NULL;
+	str = ft_alloc(str, (char *)s, c, count);
+	*(str + count + 1) = NULL;
 	return (str);
 }
