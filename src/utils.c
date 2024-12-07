@@ -39,7 +39,7 @@ char	**getpath(t_tool *tool)
 	while (tool->envp[i])
 		if (ft_strncmp(tool->envp[i++], "PATH=", 5) == 0)
 			return (ft_split(tool->envp[i - 1] + 5, ':'));
-	return (NULL);
+	return (ft_split("/core/dump /core/dump/eiei", ' '));
 }
 
 void	ft_close_fd(t_tool *tool)

@@ -44,11 +44,6 @@ void	execute(t_tool *tool, char **v, int num_cmd)
 {
 	tool->cmd = ft_split(v[num_cmd], ' ');
 	tool->all_path = getpath(tool);
-	if (!tool->all_path)
-	{
-		free(tool->cmd);
-		exit(EXIT_FAILURE);
-	}
 	check_access(tool);
 	if (execve(tool->path_cmd, tool->cmd, tool->envp) == -1)
 	{
@@ -80,10 +75,7 @@ void	ft_init(t_tool *tool, char **v, char **envp)
 		perror("pipe");
 		exit(EXIT_FAILURE);
 	}
-	close(tool->pipe_fd[0]);
 	dup2(tool->file_fd[0], 0);
-	dup2(tool->pipe_fd[1], 1);
-	close(tool->pipe_fd[1]);
 	close(tool->file_fd[0]);
 }
 
