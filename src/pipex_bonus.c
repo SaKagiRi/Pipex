@@ -17,7 +17,7 @@ int	check_cmdpath(t_exe *tool)
 	int	i;
 
 	i = 0;
-	while (tool->cmd[0][i] && strncmp(tool->all_path[0], "core/dump", 9) == 0)
+	while (tool->cmd[0][i])
 	{
 		if (tool->cmd[0][i++] == '/')
 		{
@@ -35,6 +35,8 @@ int	check_cmdpath(t_exe *tool)
 			exit(EXIT_FAILURE);
 		}
 	}
+	if (!tool->all_path)
+		return (-1);
 	return (0);
 }
 
