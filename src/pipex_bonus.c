@@ -17,7 +17,7 @@ int	check_cmdpath(t_exe *tool)
 	int	i;
 
 	i = 0;
-	while (tool->cmd[0][i])
+	while (tool->cmd[0][i] && strncmp(tool->all_path[0], "core/dump", 9) == 0)
 	{
 		if (tool->cmd[0][i++] == '/')
 		{
@@ -35,8 +35,6 @@ int	check_cmdpath(t_exe *tool)
 			exit(EXIT_FAILURE);
 		}
 	}
-	if (!tool->all_path)
-		return (-1);
 	return (0);
 }
 
@@ -63,7 +61,7 @@ int	main(int c, char **v, char **envp)
 	pid = fork();
 	if (pid == 0)
 	{
-		execute(v[1], envp);
+		execute(v[1], envp); // สามารพใช้ ฟังค์ชั่นแล้วทำงานได้เลย
 	}
 	wait(0);
 }
