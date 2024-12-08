@@ -1,53 +1,55 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex_bonus.h                                      :+:      :+:    :+:   */
+/*   pipex.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: knakto <knakto@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/21 22:55:12 by knakto            #+#    #+#             */
-/*   Updated: 2024/11/23 01:52:10 by knakto           ###   ########.fr       */
+/*   Updated: 2024/12/06 23:10:03 by knakto           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_BONUS_H
 # define PIPEX_BONUS_H
 
-# include "../KML/include/kml.h"
-# include <fcntl.h>
-# include <sys/wait.h>
 # include <stdio.h>
-# include <unistd.h>
+# include <sys/wait.h>
 # include <errno.h>
-# include <string.h>
+# include "../KML/include/kml.h"
 
-# ifndef IRWXG
-#  define IRWXG 0644
+# ifndef rwx
+# define rwx 0666
 # endif
+
+typedef struct s_exe
+{
+	char	*path_cmd;
+	char	**all_path;
+	char	**envp;
+	char	**cmd;
+}	t_exe;
 
 typedef struct s_tool
 {
-	char	**all_cmd;
-	char	**v;
-	char	**cmd;
-	pid_t	*pid;
-	int		out_fd;
-	int		wp;
-	int		i;
 	int		pipe_fd[2];
-	int		c;
-	int		status;
+	int		file_fd[2];
+	pid_t	pid1;
+	pid_t	pid2;
+	char	*path_cmd;
+	char	**all_path;
 	char	**envp;
+	char	**cmd;
 }	t_tool;
 
-void	here_doc_init(t_tool *tool, int file_fd);
-void	reerror(char *text, t_tool *tool);
-char	**get_path(char **envp);
-char	*can_access(char **path, t_tool *tool);
-void	exe(t_tool *tool);
-void	process(t_tool *tool);
-void	file_init(t_tool *tool);
-void	last_cmd(t_tool *tool);
-void	ft_heredoc(t_tool *tool);
+int		check_cmdpath(t_exe *tool);
+void	check_access(t_exe *tool);
+void	execute(char *cmd, char **envp);
+void	ft_init(t_tool *tool, char **v, char **envp);
+void	fork_process(t_tool *tool, char **v);
+void	process_in(t_tool *tool, char **v);
+void	ft_close_fd(t_tool *tool);
+void	process_out(t_tool *tool, char **v);
+char	**getpath(t_exe *tool);
 
 #endif

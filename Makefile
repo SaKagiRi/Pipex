@@ -1,6 +1,6 @@
 NAME	= pipex
 FILE	= pipex.c utils.c 
-BFILE	= pipex_bonus.c pipex_utils_bonus.c
+BFILE	= pipex_bonus.c utils_bonus.c
 FLAGS	= -Wall -Wextra -Werror -g3 -o0
 CC	= cc
 OBJD	= obj
