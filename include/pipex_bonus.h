@@ -18,8 +18,8 @@
 # include <errno.h>
 # include "../KML/include/kml.h"
 
-# ifndef rw
-# define rw 0666
+# ifndef RW
+#  define RW 0666
 # endif
 
 typedef struct s_exe
@@ -43,8 +43,8 @@ void	process(t_tool *tool, int num_program, char *cmd, char **envp);
 void	ft_heredoc(t_tool *tool, char *v, int c);
 void	here_doc_init(t_tool *tool, int file_fd, int c);
 char	**getpath(t_exe *tool);
-void check_access(t_exe *tool);
-int	check_cmdpath(t_exe *tool);
+void	check_access(t_exe *tool);
+int		check_cmdpath(t_exe *tool);
 void	ft_free(t_tool *tool);
 void	process_out(t_tool *tool, int i, char *cmd, char **envp);
 

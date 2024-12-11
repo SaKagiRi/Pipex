@@ -18,8 +18,8 @@
 # include <errno.h>
 # include "../KML/include/kml.h"
 
-# ifndef rwx
-# define rwx 0666
+# ifndef RW
+#  define RW 0666
 # endif
 
 typedef struct s_tool
