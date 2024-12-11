@@ -23,7 +23,14 @@ char	**getpath(t_exe *tool)
 	return (ft_split("/core/dump /core/dump/eiei", ' '));
 }
 
-int	check_access(t_exe *tool)
+void	ft_close_fd(t_tool *tool)
+{
+	close(tool->file_out);
+	close(tool->pipe_fd[0]);
+	close(tool->pipe_fd[1]);
+}
+
+void	check_access(t_exe *tool)
 {
 	int	i;
 	int	status;
@@ -31,7 +38,7 @@ int	check_access(t_exe *tool)
 	i = -1;
 	status = check_cmdpath(tool);
 	if (status == 1)
-		return (1);
+		return ;
 	while (tool->all_path[++i] && status == 0)
 	{
 		tool->all_path[i] = fjoin(tool->all_path[i], "/");
@@ -40,7 +47,7 @@ int	check_access(t_exe *tool)
 		{
 			tool->path_cmd = ft_strdup(tool->all_path[i]);
 			free_split(tool->all_path);
-			return (0);
+			return ;
 		}
 	}
 	if (tool->all_path)
@@ -48,7 +55,7 @@ int	check_access(t_exe *tool)
 	perror(tool->cmd[0]);
 	if (tool->cmd)
 		free_split(tool->cmd);
-	return (-1);
+	exit(EXIT_FAILURE);
 }
 
 int	check_cmdpath(t_exe *tool)

@@ -13,19 +13,17 @@
 #include "../include/pipex_bonus.h"
 
 
-int	execute(char *cmd, char **envp)
+void	execute(char *cmd, char **envp)
 {
 	t_exe	tool;
 
 	tool.envp = envp;
 	tool.cmd = ft_split(cmd, ' ');
 	tool.all_path = getpath(&tool);
-	if (check_access(&tool) == -1)
-		return (-1);
+	check_access(&tool);
 	execve(tool.path_cmd, tool.cmd, envp);
 	free_split(tool.cmd);
 	free(tool.path_cmd);
-	return (-1);
 }
 
 void	file_init(t_tool *tool, char *file_in, int count)
@@ -112,7 +110,8 @@ int	main(int c, char **v, char **envp)
 	int	mode;
 
 	if (c < 5 || (c < 6 && ft_strncmp(v[1], "here_doc", 9) == 0))
-		return (pnf("failed input"));
+		return (pnf("	./pipex file_in cmd1 cmd2 ... file_out\n \
+	./pipex here_doc eof cmd1 cmd2 ... file_out"));
 	files.file_out = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, rw);
 	if (ft_strncmp(v[1], "here_doc", 9) == 0)
 	{

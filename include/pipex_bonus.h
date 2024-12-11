@@ -37,13 +37,13 @@ typedef struct s_tool
 	pid_t	*pid;
 }	t_tool;
 
-int	execute(char *cmd, char **envp);
+void	execute(char *cmd, char **envp);
 void	file_init(t_tool *tool, char *file_in, int count);
 void	process(t_tool *tool, int num_program, char *cmd, char **envp);
 void	ft_heredoc(t_tool *tool, char *v, int c);
 void	here_doc_init(t_tool *tool, int file_fd, int c);
 char	**getpath(t_exe *tool);
-int	check_access(t_exe *tool);
+void check_access(t_exe *tool);
 int	check_cmdpath(t_exe *tool);
 void	ft_free(t_tool *tool);
 void	process_out(t_tool *tool, int i, char *cmd, char **envp);
