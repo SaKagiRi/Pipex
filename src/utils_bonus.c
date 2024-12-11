@@ -23,15 +23,7 @@ char	**getpath(t_exe *tool)
 	return (ft_split("/core/dump /core/dump/eiei", ' '));
 }
 
-void	ft_close_fd(t_tool *tool)
-{
-	close(tool->file_fd[0]);
-	close(tool->file_fd[1]);
-	close(tool->pipe_fd[0]);
-	close(tool->pipe_fd[1]);
-}
-
-void	check_access(t_exe *tool)
+int	check_access(t_exe *tool)
 {
 	int	i;
 	int	status;
@@ -39,7 +31,7 @@ void	check_access(t_exe *tool)
 	i = -1;
 	status = check_cmdpath(tool);
 	if (status == 1)
-		return ;
+		return (1);
 	while (tool->all_path[++i] && status == 0)
 	{
 		tool->all_path[i] = fjoin(tool->all_path[i], "/");
@@ -48,7 +40,7 @@ void	check_access(t_exe *tool)
 		{
 			tool->path_cmd = ft_strdup(tool->all_path[i]);
 			free_split(tool->all_path);
-			return ;
+			return (0);
 		}
 	}
 	if (tool->all_path)
@@ -56,5 +48,62 @@ void	check_access(t_exe *tool)
 	perror(tool->cmd[0]);
 	if (tool->cmd)
 		free_split(tool->cmd);
+	return (-1);
+}
+
+int	check_cmdpath(t_exe *tool)
+{
+	int	i;
+
+	i = 0;
+	while (tool->cmd[0][i])
+	{
+		if (tool->cmd[0][i++] == '/')
+		{
+			if (access(tool->cmd[1], X_OK | F_OK) == 0)
+			{
+				tool->path_cmd = tool->cmd[0];
+				tool->cmd[0] = ft_strdup(ft_strrchr(tool->cmd[0], '/') + 1);
+				if (tool->all_path)
+					free_split(tool->all_path);
+				return (1);
+			}
+			return (-1);
+		}
+	}
+	if (!tool->all_path)
+		return (-1);
+	return (0);
+}
+
+void	ft_free(t_tool *tool)
+{
+	free(tool->pid);
 	exit(EXIT_FAILURE);
+}
+
+void	process_out(t_tool *tool, int i, char *cmd, char **envp)
+{
+	int count;
+
+	count = 0;
+	tool->pid[i] = fork();
+	if (tool->pid[i] < 0)
+	{
+		perror("fork: process_out");
+		free(tool->pid);
+		close(tool->file_out);
+		exit(EXIT_FAILURE);
+	}
+	if (tool->pid[i] == 0)
+	{
+		dup2(tool->file_out, 1);
+		close(tool->file_out);
+		execute(cmd, envp);
+	}
+	wait(0);
+	while (count < i)
+		waitpid(tool->pid[count++], 0, 0);
+	if (tool->pid)
+		free(tool->pid);
 }

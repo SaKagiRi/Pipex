@@ -18,8 +18,8 @@
 # include <errno.h>
 # include "../KML/include/kml.h"
 
-# ifndef rwx
-# define rwx 0666
+# ifndef rw
+# define rw 0666
 # endif
 
 typedef struct s_exe
@@ -33,23 +33,19 @@ typedef struct s_exe
 typedef struct s_tool
 {
 	int		pipe_fd[2];
-	int		file_fd[2];
-	pid_t	pid1;
-	pid_t	pid2;
-	char	*path_cmd;
-	char	**all_path;
-	char	**envp;
-	char	**cmd;
+	int		file_out;
+	pid_t	*pid;
 }	t_tool;
 
-int		check_cmdpath(t_exe *tool);
-void	check_access(t_exe *tool);
-void	execute(char *cmd, char **envp);
-void	ft_init(t_tool *tool, char **v, char **envp);
-void	fork_process(t_tool *tool, char **v);
-void	process_in(t_tool *tool, char **v);
-void	ft_close_fd(t_tool *tool);
-void	process_out(t_tool *tool, char **v);
+int	execute(char *cmd, char **envp);
+void	file_init(t_tool *tool, char *file_in, int count);
+void	process(t_tool *tool, int num_program, char *cmd, char **envp);
+void	ft_heredoc(t_tool *tool, char *v, int c);
+void	here_doc_init(t_tool *tool, int file_fd, int c);
 char	**getpath(t_exe *tool);
+int	check_access(t_exe *tool);
+int	check_cmdpath(t_exe *tool);
+void	ft_free(t_tool *tool);
+void	process_out(t_tool *tool, int i, char *cmd, char **envp);
 
 #endif

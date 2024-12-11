@@ -1,7 +1,7 @@
 NAME	= pipex
 FILE	= pipex.c utils.c 
-BFILE	= pipex_bonus.c utils_bonus.c
-FLAGS	= -Wall -Wextra -Werror -g3 -o0
+BFILE	= pipex_bonus.c utils_bonus.c ultils2_bonus.c
+FLAGS	= -Wall -Wextra -Werror -g3 -o0 -fsanitize=address,undefined
 CC	= cc
 OBJD	= obj
 SRCD	= src

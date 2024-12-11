@@ -12,58 +12,120 @@
 
 #include "../include/pipex_bonus.h"
 
-int	check_cmdpath(t_exe *tool)
-{
-	int	i;
 
-	i = 0;
-	while (tool->cmd[0][i])
-	{
-		if (tool->cmd[0][i++] == '/')
-		{
-			if (access(tool->cmd[1], X_OK | F_OK) == 0)
-			{
-				tool->path_cmd = tool->cmd[0];
-				tool->cmd[0] = ft_strdup(ft_strrchr(tool->cmd[0], '/') + 1);
-				if (tool->all_path)
-					free_split(tool->all_path);
-				return (1);
-			}
-			free_split(tool->all_path);
-			perror(tool->cmd[0]);
-			free_split(tool->cmd);
-			exit(EXIT_FAILURE);
-		}
-	}
-	if (!tool->all_path)
-		return (-1);
-	return (0);
-}
-
-void	execute(char *cmd, char **envp)
+int	execute(char *cmd, char **envp)
 {
 	t_exe	tool;
 
 	tool.envp = envp;
 	tool.cmd = ft_split(cmd, ' ');
 	tool.all_path = getpath(&tool);
-	check_access(&tool);
+	if (check_access(&tool) == -1)
+		return (-1);
 	execve(tool.path_cmd, tool.cmd, envp);
 	free_split(tool.cmd);
 	free(tool.path_cmd);
-	exit(EXIT_FAILURE);
+	return (-1);
+}
+
+void	file_init(t_tool *tool, char *file_in, int count)
+{
+	int	file_fd;
+
+	file_fd = open(file_in, O_RDONLY);
+	if (file_fd == -1)
+	{
+		perror(file_in);
+		exit(EXIT_FAILURE);
+	}
+	dup2(file_fd, 0);
+	close(file_fd);
+	tool->pid = malloc(sizeof(pid_t) * count);
+	if (!tool->pid)
+	{
+		perror("fork: file_init");
+		exit(EXIT_FAILURE);
+	}
+}
+
+void	process(t_tool *tool, int num_program, char *cmd, char **envp)
+{
+	int	pipe_fd[2];
+
+	if (pipe(pipe_fd) < 0)
+	{
+		perror("pipe: process");
+		free(tool->pid);
+		exit(EXIT_FAILURE);
+	}
+	tool->pid[num_program] = fork();
+	if (tool->pid[num_program] < 0)
+	{
+		perror("fork: process");
+		free(tool->pid);
+		exit(EXIT_FAILURE);
+	}
+	if (tool->pid[num_program] == 0)
+	{
+		close(pipe_fd[0]);
+		dup2(pipe_fd[1], 1);
+		close(pipe_fd[1]);
+		execute(cmd, envp);
+	}
+	close(pipe_fd[1]);
+	dup2(pipe_fd[0], 0);
+	close(pipe_fd[0]);
+}
+
+void	ft_heredoc(t_tool *tool, char *v, int c)
+{
+	int		file_fd;
+	int		len;
+	char	*str;
+
+	len = ft_strlen(v);
+	file_fd = open(".here_doc_temp", O_WRONLY | O_CREAT | O_TRUNC, rw);
+	write(0, "here_doc>", 10);
+	str = get_next_line(0);
+	while (str != NULL)
+	{
+		if (ft_strncmp(str, v, len) == 0 && ft_strlen(str) - 1 == (size_t) len)
+		{
+			here_doc_init(tool, file_fd, c);
+			free(str);
+			return ;
+		}
+		write(file_fd, str, ft_strlen(str));
+		free(str);
+		write(0, "here_doc>", 9);
+		str = get_next_line(0);
+	}
+	unlink(".here_doc_temp");
+	free(str);
+	exit(1);
 }
 
 int	main(int c, char **v, char **envp)
 {
-	(void)c;
-	(void)v;
-	pid_t pid;
+	t_tool files;
+	int	i;
+	int	mode;
 
-	pid = fork();
-	if (pid == 0)
+	if (c < 5 || (c < 6 && ft_strncmp(v[1], "here_doc", 9) == 0))
+		return (pnf("failed input"));
+	files.file_out = open(v[c - 1], O_WRONLY | O_CREAT | O_TRUNC, rw);
+	if (ft_strncmp(v[1], "here_doc", 9) == 0)
 	{
-		execute(v[1], envp); // สามารพใช้ ฟังค์ชั่นแล้วทำงานได้เลย
+		ft_heredoc(&files, v[2], c);
+		mode = 3;
 	}
-	wait(0);
+	else
+	{
+		file_init(&files, v[1], c);
+		mode = 2;
+	}
+	i = -1;
+	while (++i != c - (mode + 2))
+		process(&files, i, v[i + mode], envp);
+	process_out(&files, i, v[i + mode], envp);
 }
