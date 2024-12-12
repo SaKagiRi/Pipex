@@ -34,9 +34,15 @@ typedef struct s_tool
 {
 	int		pipe_fd[2];
 	int		file_out;
+	int		mode;
+	char	*file_in;
+	char	*file_end;
 	pid_t	*pid;
 }	t_tool;
 
+void	ft_file_out(t_tool *tool);
+void	check_file_in(t_tool *tool);
+void	run(int pipe_fd[2], char *cmd, char **envp);
 void	execute(char *cmd, char **envp);
 void	file_init(t_tool *tool, char *file_in, int count);
 void	process(t_tool *tool, int num_program, char *cmd, char **envp);

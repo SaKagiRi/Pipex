@@ -132,6 +132,7 @@ void	process_out(t_tool *tool, int i, char *cmd, char **envp)
 	}
 	if (tool->pid[i] == 0)
 	{
+		ft_file_out(tool);
 		dup2(tool->file_out, 1);
 		close(tool->file_out);
 		execute(cmd, envp);
