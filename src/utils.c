@@ -49,6 +49,13 @@
 
 void	process_in(t_tool *tool, char **v)
 {
+	tool->file_fd[0] = open(v[1], O_RDONLY);
+	if (tool->file_fd[0] < 0)
+	{
+		perror(v[1]);
+		exit(EXIT_FAILURE);
+	}
+	close(tool->file_fd[0]);
 	close(tool->file_fd[1]);
 	close(tool->pipe_fd[0]);
 	dup2(tool->pipe_fd[1], 1);
@@ -58,6 +65,12 @@ void	process_in(t_tool *tool, char **v)
 
 void	process_out(t_tool *tool, char **v)
 {
+	tool->file_fd[1] = open(v[4], O_WRONLY | O_CREAT | O_TRUNC, RW);
+	if (tool->file_fd[1] < 0)
+	{
+		perror(v[4]);
+		exit(EXIT_FAILURE);
+	}
 	dup2(tool->file_fd[1], 1);
 	close(tool->file_fd[1]);
 	close(tool->pipe_fd[1]);

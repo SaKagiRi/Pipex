@@ -97,12 +97,6 @@ void	ft_init(t_tool *tool, char **v, char **envp)
 	tool->envp = envp;
 	tool->file_fd[1] = open(v[4], O_WRONLY | O_CREAT | O_TRUNC, RW);
 	tool->file_fd[0] = open(v[1], O_RDONLY);
-	if (tool->file_fd[0] < 0)
-	{
-		close(tool->file_fd[1]);
-		perror(v[1]);
-		exit(EXIT_FAILURE);
-	}
 	if (pipe(tool->pipe_fd) < 0)
 	{
 		close(tool->file_fd[0]);
@@ -112,6 +106,7 @@ void	ft_init(t_tool *tool, char **v, char **envp)
 	}
 	dup2(tool->file_fd[0], 0);
 	close(tool->file_fd[0]);
+	close(tool->file_fd[1]);
 }
 
 void	fork_process(t_tool *tool, char **v)
