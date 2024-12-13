@@ -110,7 +110,7 @@ void	ft_heredoc(t_tool *tool, char *v, int c)
 
 	len = ft_strlen(v);
 	file_fd = open(".here_doc_temp", O_WRONLY | O_CREAT | O_TRUNC, RW);
-	write(0, "here_doc>", 10);
+	write(0, "> ", 2);
 	str = get_next_line(0);
 	while (str != NULL)
 	{
@@ -122,7 +122,7 @@ void	ft_heredoc(t_tool *tool, char *v, int c)
 		}
 		write(file_fd, str, ft_strlen(str));
 		free(str);
-		write(0, "here_doc>", 9);
+		write(0, "> ", 2);
 		str = get_next_line(0);
 	}
 	unlink(".here_doc_temp");
