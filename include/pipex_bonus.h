@@ -19,7 +19,7 @@
 # include "../KML/include/kml.h"
 
 # ifndef RW
-#  define RW 0666
+#  define RW 0644
 # endif
 
 typedef struct s_exe
